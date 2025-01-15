@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fidgeting Toys</title>
+    <style>
+      /* General Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Arial", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: linear-gradient(to bottom left, #121212, #1f1f1f, #262626);
+        height: 100vh;
+        overflow: hidden;
+        color: #ffffff;
+      }
+      #slider {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: #181818;
+        color: white;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+      }
+      #slider button {
+        background: #1f8ef1;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1rem;
+        transition: all 0.3s;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+      #slider button:hover {
+        background: #1473e6;
+        transform: scale(1.1);
+      }
+      #content {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+        gap: 5px;
+        justify-content: center;
+        align-content: center;
+        width: 100vw;
+        height: 100vh;
+        padding-top: 60px;
+        overflow: hidden;
+      }
+      .bubble {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 -3px 8px rgba(0, 0, 0, 0.5),
+          0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.1s, background 0.3s;
+        cursor: pointer;
+      }
+      .bubble:hover {
+        background: #292929;
+      }
+      .bubble.popped {
+        background: #444;
+        transform: scale(0.8);
+        box-shadow: inset 0 -1px 5px rgba(0, 0, 0, 0.3),
+          0 2px 5px rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="slider">
+      <button onclick="showBubbleWrap()">Bubble Wrap</button>
+    </div>
+    <div id="content"></div>
+
+    <script>
+      let isDragging = false; // Track dragging state
+
+      function playRandomPopSound() {
+        const sounds = ["bw1.mp3", "bw2.mp3", "bw3.mp3"];
+        const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
+        const audio = new Audio(randomSound);
+        audio.play();
+      }
+
+      function showBubbleWrap() {
+        const content = document.getElementById("content");
+        content.innerHTML = ""; // Clear previous content
+
+        const totalBubbles =
+          Math.ceil(window.innerWidth / 50) *
+          Math.ceil(window.innerHeight / 50);
+
+        for (let i = 0; i < totalBubbles; i++) {
+          const bubble = document.createElement("div");
+          bubble.classList.add("bubble");
+          bubble.addEventListener("mouseenter", () => {
+            if (isDragging) popBubble(bubble);
+          });
+          bubble.addEventListener("click", () => popBubble(bubble));
+          content.appendChild(bubble);
+        }
+      }
+
+      function popBubble(bubble) {
+        if (!bubble.classList.contains("popped")) {
+          bubble.classList.add("popped");
+          playRandomPopSound();
+        }
+      }
+
+      // Detect dragging
+      document.body.addEventListener("mousedown", () => {
+        isDragging = true;
+      });
+
+      document.body.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+
+      // Initialize bubble wrap on load
+      showBubbleWrap();
+
+      // Adjust the bubble layout on window resize
+      window.addEventListener("resize", showBubbleWrap);
+    </script>
+  </body>
+</html>
