@@ -93,6 +93,7 @@
 
     <script>
       let isDragging = false; // Track dragging state
+      let lastTouchedBubble = null; // Track the last bubble touched
 
       function playRandomPopSound() {
         const sounds = ["bw1.mp3", "bw2.mp3", "bw3.mp3"];
@@ -112,10 +113,33 @@
         for (let i = 0; i < totalBubbles; i++) {
           const bubble = document.createElement("div");
           bubble.classList.add("bubble");
+
+          // Mouse events
           bubble.addEventListener("mouseenter", () => {
             if (isDragging) popBubble(bubble);
           });
           bubble.addEventListener("click", () => popBubble(bubble));
+
+          // Touch events
+          bubble.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            isDragging = true;
+            popBubble(bubble);
+          });
+          bubble.addEventListener("touchmove", (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (element && element.classList.contains("bubble") && element !== lastTouchedBubble) {
+              popBubble(element);
+              lastTouchedBubble = element;
+            }
+          });
+          bubble.addEventListener("touchend", () => {
+            isDragging = false;
+            lastTouchedBubble = null;
+          });
+
           content.appendChild(bubble);
         }
       }
