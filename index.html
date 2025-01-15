@@ -25,13 +25,18 @@
         position: fixed;
         top: 0;
         width: 100%;
-        background: #181818;
+        background: rgba(
+          24,
+          24,
+          24,
+          0.7
+        ); /* Semi-transparent black background */
         color: white;
         padding: 15px;
         display: flex;
         justify-content: center;
         gap: 20px;
-        z-index: 1000;
+        z-index: 1000; /* Button should always be above bubbles */
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
       }
       #slider button {
@@ -63,6 +68,9 @@
         height: 100vh;
         padding-top: 60px;
         overflow: hidden;
+        z-index: 999; /* Bubbles above the button */
+        position: relative;
+        pointer-events: none; /* Make sure the bubbles can be clicked through the button */
       }
       .bubble {
         width: 100%;
@@ -152,6 +160,9 @@
 
           content.appendChild(bubble);
         }
+
+        // Make bubbles clickable even through the button
+        content.style.pointerEvents = "auto";
       }
 
       function popBubble(bubble) {
