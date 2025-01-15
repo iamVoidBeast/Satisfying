@@ -50,6 +50,37 @@
         background: #1473e6;
         transform: scale(1.1);
       }
+
+      /* Heart Button Styles */
+      #heart-button {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background: #e74c3c;
+        border: none;
+        border-radius: 50%;
+        font-size: 2rem;
+        color: white;
+        padding: 15px;
+        cursor: pointer;
+        z-index: 2000;
+        transition: transform 0.2s, color 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #heart-button.liked {
+        transform: scale(1.2);
+        background: #e54949;
+      }
+
+      /* Likes Counter */
+      #likes-counter {
+        margin-left: 10px;
+        font-size: 1.2rem;
+        color: white;
+      }
+
       #content {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
@@ -89,11 +120,22 @@
     <div id="slider">
       <button onclick="showBubbleWrap()">Bubble Wrap</button>
     </div>
+    <button id="heart-button" onclick="toggleLike()">
+      ♥
+      <span id="likes-counter">0</span>
+    </button>
     <div id="content"></div>
 
     <script>
-      let isDragging = false; // Track dragging state
-      let lastTouchedBubble = null; // Track the last bubble touched
+      let isDragging = false;
+      let lastTouchedBubble = null;
+      let likesCount = 0;
+
+      // Check if there's a saved like count in localStorage
+      if (localStorage.getItem("likesCount")) {
+        likesCount = parseInt(localStorage.getItem("likesCount"));
+        updateLikesDisplay();
+      }
 
       function playRandomPopSound() {
         const sounds = ["bw1.mp3", "bw2.mp3", "bw3.mp3"];
@@ -129,8 +171,15 @@
           bubble.addEventListener("touchmove", (e) => {
             e.preventDefault();
             const touch = e.touches[0];
-            const element = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (element && element.classList.contains("bubble") && element !== lastTouchedBubble) {
+            const element = document.elementFromPoint(
+              touch.clientX,
+              touch.clientY
+            );
+            if (
+              element &&
+              element.classList.contains("bubble") &&
+              element !== lastTouchedBubble
+            ) {
               popBubble(element);
               lastTouchedBubble = element;
             }
@@ -159,6 +208,29 @@
       document.body.addEventListener("mouseup", () => {
         isDragging = false;
       });
+
+      // Toggle the heart button
+      function toggleLike() {
+        const heartButton = document.getElementById("heart-button");
+        heartButton.classList.toggle("liked");
+
+        if (heartButton.classList.contains("liked")) {
+          likesCount++;
+        } else {
+          likesCount--;
+        }
+
+        // Save the likes count to localStorage
+        localStorage.setItem("likesCount", likesCount);
+
+        // Update the likes counter display
+        updateLikesDisplay();
+      }
+
+      // Update the display of likes count
+      function updateLikesDisplay() {
+        document.getElementById("likes-counter").textContent = likesCount;
+      }
 
       // Initialize bubble wrap on load
       showBubbleWrap();
