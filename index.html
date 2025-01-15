@@ -35,7 +35,7 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
       }
       #slider button {
-        background: #1f8ef1;
+        background: #14325f;
         color: white;
         border: none;
         padding: 10px 20px;
@@ -50,41 +50,13 @@
         background: #1473e6;
         transform: scale(1.1);
       }
-
-      /* Heart Button Styles */
-      #heart-button {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        background: #e74c3c;
-        border: none;
-        border-radius: 50%;
-        font-size: 2rem;
-        color: white;
-        padding: 15px;
-        cursor: pointer;
-        z-index: 2000;
-        transition: transform 0.2s, color 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      #heart-button.liked {
-        transform: scale(1.2);
-        background: #e54949;
-      }
-
-      /* Likes Counter */
-      #likes-counter {
-        margin-left: 10px;
-        font-size: 1.2rem;
-        color: white;
-      }
-
       #content {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-        gap: 5px;
+        grid-template-columns: repeat(
+          auto-fill,
+          minmax(30px, 1fr)
+        ); /* Smaller bubbles */
+        gap: 3px; /* Reduced gap between bubbles */
         justify-content: center;
         align-content: center;
         width: 100vw;
@@ -109,7 +81,7 @@
         background: #292929;
       }
       .bubble.popped {
-        background: #444;
+        background: #4e4e4e;
         transform: scale(0.8);
         box-shadow: inset 0 -1px 5px rgba(0, 0, 0, 0.3),
           0 2px 5px rgba(0, 0, 0, 0.3);
@@ -120,22 +92,11 @@
     <div id="slider">
       <button onclick="showBubbleWrap()">Bubble Wrap</button>
     </div>
-    <button id="heart-button" onclick="toggleLike()">
-      ♥
-      <span id="likes-counter">0</span>
-    </button>
     <div id="content"></div>
 
     <script>
-      let isDragging = false;
-      let lastTouchedBubble = null;
-      let likesCount = 0;
-
-      // Check if there's a saved like count in localStorage
-      if (localStorage.getItem("likesCount")) {
-        likesCount = parseInt(localStorage.getItem("likesCount"));
-        updateLikesDisplay();
-      }
+      let isDragging = false; // Track dragging state
+      let lastTouchedBubble = null; // Track the last bubble touched
 
       function playRandomPopSound() {
         const sounds = ["bw1.mp3", "bw2.mp3", "bw3.mp3"];
@@ -149,8 +110,8 @@
         content.innerHTML = ""; // Clear previous content
 
         const totalBubbles =
-          Math.ceil(window.innerWidth / 50) *
-          Math.ceil(window.innerHeight / 50);
+          Math.ceil(window.innerWidth / 30) * // Adjusted for smaller bubbles
+          Math.ceil(window.innerHeight / 30); // Adjusted for smaller bubbles
 
         for (let i = 0; i < totalBubbles; i++) {
           const bubble = document.createElement("div");
@@ -208,29 +169,6 @@
       document.body.addEventListener("mouseup", () => {
         isDragging = false;
       });
-
-      // Toggle the heart button
-      function toggleLike() {
-        const heartButton = document.getElementById("heart-button");
-        heartButton.classList.toggle("liked");
-
-        if (heartButton.classList.contains("liked")) {
-          likesCount++;
-        } else {
-          likesCount--;
-        }
-
-        // Save the likes count to localStorage
-        localStorage.setItem("likesCount", likesCount);
-
-        // Update the likes counter display
-        updateLikesDisplay();
-      }
-
-      // Update the display of likes count
-      function updateLikesDisplay() {
-        document.getElementById("likes-counter").textContent = likesCount;
-      }
 
       // Initialize bubble wrap on load
       showBubbleWrap();
